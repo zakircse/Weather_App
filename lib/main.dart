@@ -28,7 +28,22 @@ class _HomePageState extends State<HomePage> {
   var humidity;
   var wind;
   Future getweather() async {
-    http.Response response = await http.get(url);
+    http.Response response = await http.get(Uri.parse(
+        "https://api.openweathermap.org/data/2.5/weather?q=Dhaka&units=imperial&appid=f002423e07cbc378b2d2e044f3cd4d44"));
+    var results = jsonDecode(response.body);
+    setState(() {
+      this.temp = results['main']['temp'];
+      this.description = results['weather'][0]['description'];
+      this.currently = results['weather'][0]['main'];
+      this.humidity = results['main']['humidity'];
+      this.wind = results['wind']['speed'];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this.getweather();
   }
 
   @override
@@ -55,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                   Padding(
                     padding: const EdgeInsets.only(top: 20, bottom: 20),
                     child: Text(
-                      "45\u00B0",
+                      temp != null ? temp.toString() + "\u00B0" : "Loading",
                       style: TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.w400,
@@ -64,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Text(
-                    "Rain",
+                    currently != null ? currently.toString() : "Loading",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
@@ -82,22 +97,32 @@ class _HomePageState extends State<HomePage> {
                     ListTile(
                       leading: Icon(Icons.thermostat),
                       title: Text("Temperature"),
-                      trailing: Text("45\u00B0"),
+                      trailing: Text(
+                        temp != null ? temp.toString() + "\u00B0" : "Loading",
+                      ),
                     ),
                     ListTile(
                       leading: Icon(Icons.cloud),
                       title: Text("Weather"),
-                      trailing: Text("Rain"),
+                      trailing: Text(
+                        description != null
+                            ? description.toString()
+                            : "Loading",
+                      ),
                     ),
                     ListTile(
                       leading: Icon(Icons.wb_sunny),
                       title: Text("Humidity"),
-                      trailing: Text("30"),
+                      trailing: Text(
+                        humidity != null ? humidity.toString() : "Loading",
+                      ),
                     ),
                     ListTile(
                       leading: Icon(Icons.air),
                       title: Text("Wind Speed"),
-                      trailing: Text("10"),
+                      trailing: Text(
+                        wind != null ? wind.toString() : "Loading",
+                      ),
                     ),
                   ],
                 ),
